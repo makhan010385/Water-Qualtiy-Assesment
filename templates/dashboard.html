@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Geo-Spatial Machine Learning Framework for Water Quality and Sewage System Assessment Using Nutrient Indicators</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --info-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 0 20px 20px 0;
+            box-shadow: 8px 0 32px rgba(0, 0, 0, 0.1);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--light-color);
+        }
+        
+        .sidebar-header h2 {
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-header p {
+            color: var(--secondary-color);
+            font-size: 0.9em;
+            margin: 0;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 10px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link:hover {
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            color: white;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .nav-link i {
+            font-size: 1.2em;
+            margin-right: 15px;
+            width: 25px;
+            text-align: center;
+        }
+        
+        .nav-link .badge {
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 0;
+            min-height: 100vh;
+            background: transparent;
+        }
+        
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            padding: 25px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            color: white;
+            border-radius: 20px 20px 0 0 !important;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .table-responsive {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        
+        .table {
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        
+        .table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .alert {
+            border-radius: 15px;
+            border: none;
+        }
+        
+        .badge {
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .data-type-badge {
+            background: linear-gradient(135deg, var(--success-color), var(--info-color));
+            color: white;
+        }
+        
+        .missing-value-badge {
+            background: linear-gradient(135deg, var(--warning-color), var(--danger-color));
+            color: white;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: white;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                border: none;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-water me-2"></i>Water Quality</h2>
+                <p>A Geo-Spatial Machine Learning Framework for Water Quality and Sewage System Assessment Using Nutrient Indicators</p>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="showDatasetOverview(); return false;">
+                        <i class="fas fa-database"></i>
+                        <span>Dataset Overview</span>
+                        <span class="badge">1</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showPreprocessing(); return false;">
+                        <i class="fas fa-cogs"></i>
+                        <span>Preprocessing</span>
+                        <span class="badge">2</span>
+                    </a>
+                </li>
+            <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showModelTraining(); return false;">
+                        <i class="fas fa-brain"></i>
+                        <span>Model Training</span>
+                        <span class="badge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showValidation(); return false;">
+                        <i class="fas fa-vial"></i>
+                        <span>Model Validation</span>
+                        <span class="badge">4</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="showXAI(); return false;">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>XAI</span>
+                        <span class="badge">5</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="row align-items-center">
+                    <div class="col-12">
+                        <h1 class="mb-0">
+                            <i class="fas fa-water text-primary me-3"></i>
+                            <span id="page-title">Water Quality Analysis Dashboard</span>
+                        </h1>
+                        <p class="text-muted mb-0 mt-2" id="page-subtitle">Comprehensive Dataset Overview and Analysis</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div id="stats-container" class="row" style="display: none; margin: 0 20px;">
+                <!-- Stats will be populated here -->
+            </div>
+
+            <!-- Dataset Overview -->
+            <div id="dataset-container" class="row" style="display: none; margin: 0 20px;">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-table me-2"></i>Dataset Overview
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading-spinner" id="dataset-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading dataset information...</p>
+                            </div>
+                            <div id="dataset-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preprocessing Results -->
+            <div id="preprocessing-container" class="row" style="display: none; margin: 0 20px;">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>Comprehensive Preprocessing Results
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading-spinner" id="preprocessing-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Running preprocessing steps...</p>
+                            </div>
+                            <div id="preprocessing-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Training Results -->
+            <div id="model-container" class="row" style="display: none; margin: 0 20px;">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-brain me-2"></i>Model Training Results
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading-spinner" id="model-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Training model...</p>
+                            </div>
+                            <div id="model-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Validation Results -->
+            <div id="validation-container" class="row" style="display: none; margin: 0 20px;">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-vial me-2"></i>Model Validation Results
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading-spinner" id="validation-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Validating model...</p>
+                            </div>
+                            <div id="validation-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XAI Results -->
+            <div id="xai-container" class="row" style="display: none; margin: 0 20px;">
+                <div class="col-12">
+                    <div class="card fade-in">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-lightbulb me-2"></i>Explainable AI (XAI)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading-spinner" id="xai-loading">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Generating explanations...</p>
+                            </div>
+                            <div id="xai-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Container -->
+            <div id="error-container" class="row" style="display: none; margin: 20px;">
+                <div class="col-12">
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <span id="error-message"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showLoading(sectionId) {
+            document.getElementById(sectionId + '-loading').style.display = 'block';
+            document.getElementById(sectionId + '-content').style.display = 'none';
+        }
+
+        function hideLoading(sectionId) {
+            document.getElementById(sectionId + '-loading').style.display = 'none';
+            document.getElementById(sectionId + '-content').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-container').style.display = 'block';
+            document.getElementById('dataset-container').style.display = 'none';
+            document.getElementById('stats-container').style.display = 'none';
+        }
+
+        function hideError() {
+            document.getElementById('error-container').style.display = 'none';
+        }
+
+        function createCompactDatasetInfo(data) {
+            return `
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-database me-2"></i>Dataset Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.shape[0].toLocaleString()}</h4>
+                                            <small>Rows</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.shape[1]}</h4>
+                                            <small>Columns</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.numerical_summary.numerical_columns.length}</h4>
+                                            <small>Numerical</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.numerical_summary.categorical_columns.length}</h4>
+                                            <small>Categorical</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-columns me-2"></i>Columns:</h6>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            ${data.columns.map(col => `<span class="badge bg-info me-1">${col}</span>`).join('')}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-chart-pie me-2"></i>Class Distribution:</h6>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            ${Object.entries(data.sewage_system_counts).map(([cls, count]) => 
+                                                `<span class="badge bg-primary me-1">${cls}: ${count.toLocaleString()}</span>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createCompactPreprocessingInfo(data) {
+            return `
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-cogs me-2"></i>Preprocessing Summary</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.data_shapes.original[0]}</h4>
+                                            <small>Original</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.step_details.duplicates.removed}</h4>
+                                            <small>Duplicates</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.step_details.outlier_detection.outliers_removed}</h4>
+                                            <small>Outliers</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.step_details.feature_selection.selected_features.length}</h4>
+                                            <small>Features</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.data_shapes.final_features[0]}</h4>
+                                            <small>Final</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="stats-card">
+                                            <h4>${data.step_details.class_imbalance.smote_applied ? 'YES' : 'NO'}</h4>
+                                            <small>Balanced</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <h6><i class="fas fa-check-circle me-2"></i>Steps Completed:</h6>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            ${data.steps_completed.map((step, index) => 
+                                                `<span class="badge bg-success me-1">${index + 1}. ${step}</span>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createTableFromData(data, title) {
+            if (!data || data.length === 0) {
+                return `<p class="text-muted">No data available</p>`;
+            }
+
+            let html = `<h5 class="mb-3"><i class="fas fa-table me-2"></i>${title}</h5>`;
+            html += '<div class="table-responsive">';
+            html += '<table class="table table-striped table-hover">';
+            
+            // Header
+            html += '<thead><tr>';
+            Object.keys(data[0]).forEach(key => {
+                html += `<th>${key}</th>`;
+            });
+            html += '</tr></thead>';
+            
+            // Body
+            html += '<tbody>';
+            data.forEach(row => {
+                html += '<tr>';
+                Object.values(row).forEach(value => {
+                    html += `<td>${value !== null && value !== undefined ? value : 'N/A'}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            
+            return html;
+        }
+
+        function createDescribeTable(data, title) {
+            if (!data) {
+                return `<p class="text-muted">No data available</p>`;
+            }
+
+            let html = `<h5 class="mb-3"><i class="fas fa-chart-bar me-2"></i>${title}</h5>`;
+            html += '<div class="table-responsive">';
+            html += '<table class="table table-striped table-hover">';
+            
+            // Header
+            html += '<thead><tr><th>Statistic</th>';
+            Object.keys(data).forEach(col => {
+                html += `<th>${col}</th>`;
+            });
+            html += '</tr></thead>';
+            
+            // Body
+            const stats = ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'];
+            html += '<tbody>';
+            stats.forEach(stat => {
+                html += '<tr>';
+                html += `<td><strong>${stat}</strong></td>`;
+                Object.keys(data).forEach(col => {
+                    const value = data[col][stat];
+                    html += `<td>${value !== null && value !== undefined ? value.toFixed(2) : 'N/A'}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table></div>';
+            
+            return html;
+        }
+
+        function createDataTypesTable(data) {
+            let html = `<h5 class="mb-3"><i class="fas fa-cogs me-2"></i>Data Types</h5>`;
+            html += '<div class="table-responsive">';
+            html += '<table class="table table-striped table-hover">';
+            html += '<thead><tr><th>Column</th><th>Data Type</th></tr></thead><tbody>';
+            
+            Object.entries(data).forEach(([col, dtype]) => {
+                html += `<tr>
+                    <td>${col}</td>
+                    <td><span class="badge data-type-badge">${dtype}</span></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        function createMissingValuesTable(data) {
+            let html = `<h5 class="mb-3"><i class="fas fa-exclamation-circle me-2"></i>Missing Values</h5>`;
+            html += '<div class="table-responsive">';
+            html += '<table class="table table-striped table-hover">';
+            html += '<thead><tr><th>Column</th><th>Missing Count</th><th>Status</th></tr></thead><tbody>';
+            
+            Object.entries(data).forEach(([col, count]) => {
+                const status = count === 0 ? 'Complete' : `${count} missing`;
+                const badgeClass = count === 0 ? 'bg-success' : 'bg-warning';
+                html += `<tr>
+                    <td>${col}</td>
+                    <td>${count}</td>
+                    <td><span class="badge ${badgeClass}">${status}</span></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        function createCategoryDistribution(data) {
+            let html = `<h5 class="mb-3"><i class="fas fa-chart-pie me-2"></i>Category Distribution</h5>`;
+            html += '<div class="row">';
+            
+            Object.entries(data).forEach(([category, count]) => {
+                const percentage = ((count / Object.values(data).reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                html += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <h6>${category}</h6>
+                                <h4 class="text-primary">${count.toLocaleString()}</h4>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar" style="width: ${percentage}%"></div>
+                                </div>
+                                <small class="text-muted">${percentage}%</small>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        async function loadDatasetOverview() {
+            hideError();
+            showLoading('dataset');
+            
+            try {
+                const response = await fetch('/dataset');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to load dataset');
+                }
+                
+                hideLoading('dataset');
+                
+                // Create compact dataset view
+                const html = createCompactDatasetInfo(data);
+                document.getElementById('dataset-content').innerHTML = html;
+                document.getElementById('dataset-container').style.display = 'block';
+                
+            } catch (error) {
+                hideLoading('dataset');
+                showError(error.message);
+            }
+        }
+
+        async function loadPreprocessing() {
+            hideError();
+            showLoading('preprocessing');
+            
+            try {
+                const response = await fetch('/preprocessing');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to run preprocessing');
+                }
+                
+                hideLoading('preprocessing');
+                
+                // Create compact preprocessing view
+                const html = createCompactPreprocessingInfo(data);
+                document.getElementById('preprocessing-content').innerHTML = html;
+                document.getElementById('preprocessing-container').style.display = 'block';
+                
+            } catch (error) {
+                hideLoading('preprocessing');
+                showError(error.message);
+            }
+        }
+
+        function createModelTrainingResults(data) {
+            return `
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-brain me-2"></i>Model Training Results</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center mb-4">
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.performance_metrics.accuracy}%</h4>
+                                            <small>Accuracy</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.performance_metrics.precision}%</h4>
+                                            <small>Precision</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.performance_metrics.recall}%</h4>
+                                            <small>Recall</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.performance_metrics.f1_score}%</h4>
+                                            <small>F1 Score</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-chart-line me-2"></i>Confusion Matrix:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        ${data.confusion_matrix.labels.map(label => `<th>${label}</th>`).join('')}
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${data.confusion_matrix.matrix.map((row, i) => 
+                                                        `<tr>
+                                                            <th>${data.confusion_matrix.labels[i]}</th>
+                                                            ${row.map(val => `<td>${val}</td>`).join('')}
+                                                        </tr>`
+                                                    ).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Model Information:</h6>
+                                        <table class="table table-sm">
+                                            <tr><td>Algorithm</td><td><strong>${data.model_info.algorithm}</strong></td></tr>
+                                            <tr><td>Training Samples</td><td>${data.model_info.training_samples.toLocaleString()}</td></tr>
+                                            <tr><td>Test Samples</td><td>${data.model_info.test_samples.toLocaleString()}</td></tr>
+                                            <tr><td>Features Used</td><td>${data.model_info.features_used.join(', ')}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <h6><i class="fas fa-tasks me-2"></i>Classification Summary:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Class</th>
+                                                        <th>Precision</th>
+                                                        <th>Recall</th>
+                                                        <th>F1-Score</th>
+                                                        <th>Support</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${Object.entries(data.classification_report).map(([class_name, metrics]) => 
+                                                        `<tr>
+                                                            <td><strong>${class_name}</strong></td>
+                                                            <td>${(metrics.precision * 100).toFixed(2)}%</td>
+                                                            <td>${(metrics.recall * 100).toFixed(2)}%</td>
+                                                            <td>${(metrics['f1-score'] * 100).toFixed(2)}%</td>
+                                                            <td>${metrics.support}</td>
+                                                        </tr>`
+                                                    ).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showModelTraining() {
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick*="showModelTraining"]').classList.add('active');
+            
+            // Update page title
+            document.getElementById('page-title').textContent = 'Model Training';
+            document.getElementById('page-subtitle').textContent = 'Logistic Regression with Performance Metrics';
+            
+            // Hide other sections
+            document.getElementById('dataset-container').style.display = 'none';
+            document.getElementById('stats-container').style.display = 'none';
+            document.getElementById('preprocessing-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            
+            // Load model training
+            loadModelTraining();
+        }
+
+        async function loadModelTraining() {
+            hideError();
+            showLoading('model');
+            
+            try {
+                const response = await fetch('/model_training');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to train model');
+                }
+                
+                hideLoading('model');
+                
+                // Create model training results view
+                const html = createModelTrainingResults(data);
+                document.getElementById('model-content').innerHTML = html;
+                document.getElementById('model-container').style.display = 'block';
+                
+            } catch (error) {
+                hideLoading('model');
+                showError(error.message);
+            }
+        }
+
+        function createValidationResults(data) {
+            return `
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-vial me-2"></i>Model Validation Results</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center mb-4">
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.validation_metrics.test_accuracy}%</h4>
+                                            <small>Test Accuracy</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.cross_validation.mean_cv_score}%</h4>
+                                            <small>Cross-Validation</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.roc_analysis.overall_auc}%</h4>
+                                            <small>ROC AUC</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="stats-card">
+                                            <h4>${data.model_stability.stability_score}%</h4>
+                                            <small>Stability</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-chart-line me-2"></i>Cross-Validation Scores:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <tr><td>Mean CV Score</td><td><strong>${data.cross_validation.mean_cv_score}%</strong></td></tr>
+                                                <tr><td>Std Deviation</td><td>${data.cross_validation.std_cv_score}%</td></tr>
+                                                <tr><td>Score Range</td><td>${data.cross_validation.cv_accuracy_range[0]}% - ${data.cross_validation.cv_accuracy_range[1]}%</td></tr>
+                                                <tr><td>CV vs Test Diff</td><td>${data.validation_metrics.cv_vs_test_diff}%</td></tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Model Stability:</h6>
+                                        <table class="table table-sm">
+                                            <tr><td>Is Stable</td><td><span class="badge ${data.model_stability.is_stable ? 'bg-success' : 'bg-warning'}">${data.model_stability.is_stable ? 'Yes' : 'No'}</span></td></tr>
+                                            <tr><td>Stability Score</td><td>${data.model_stability.stability_score}%</td></tr>
+                                            <tr><td>Recommendation</td><td><strong>${data.model_stability.recommendation}</strong></td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <h6><i class="fas fa-chart-bar me-2"></i>Per-Class ROC AUC:</h6>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            ${Object.entries(data.roc_analysis.per_class_auc).map(([cls, auc]) => 
+                                                `<div class="badge bg-info">${cls}: ${auc}%</div>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function createXAIResults(data) {
+            return `
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-lightbulb me-2"></i>Explainable AI (XAI) Results</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center mb-4">
+                                    <div class="col-md-4">
+                                        <div class="stats-card">
+                                            <h4>${data.xai_info.total_features}</h4>
+                                            <small>Features Analyzed</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stats-card">
+                                            <h4>${data.model_interpretability.interpretability_score}%</h4>
+                                            <small>Interpretability</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stats-card">
+                                            <h4>${data.xai_info.samples_analyzed}</h4>
+                                            <small>Sample Explanations</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-trophy me-2"></i>Top Features:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                ${data.feature_importance.top_features.map((feat, i) => 
+                                                    `<tr>
+                                                        <td><span class="badge bg-warning">${i+1}</span></td>
+                                                        <td><strong>${feat[0]}</strong></td>
+                                                        <td><div class="progress" style="height: 20px;"><div class="progress-bar" style="width: ${feat[1]*100}%">${(feat[1]*100).toFixed(1)}%</div></div></td>
+                                                    </tr>`
+                                                ).join('')}
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-chart-pie me-2"></i>Importance Distribution:</h6>
+                                        <div class="d-flex flex-wrap gap-2 mb-3">
+                                            <div class="badge bg-success">High: ${data.feature_importance.importance_distribution.high_importance}</div>
+                                            <div class="badge bg-warning">Medium: ${data.feature_importance.importance_distribution.medium_importance}</div>
+                                            <div class="badge bg-secondary">Low: ${data.feature_importance.importance_distribution.low_importance}</div>
+                                        </div>
+                                        <h6><i class="fas fa-lightbulb me-2"></i>Recommendations:</h6>
+                                        <ul class="list-unstyled">
+                                            ${data.model_interpretability.recommendations.map(rec => 
+                                                `<li><i class="fas fa-check text-success me-2"></i>${rec}</li>`
+                                            ).join('')}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <h6><i class="fas fa-search me-2"></i>Sample Explanations:</h6>
+                                        <div class="row">
+                                            ${data.sample_explanations.map(sample => 
+                                                `<div class="col-md-6 mb-3">
+                                                    <div class="card border-primary">
+                                                        <div class="card-body">
+                                                            <h6>Sample ${sample.sample_id + 1}</h6>
+                                                            <p class="mb-2"><strong>Actual:</strong> ${sample.actual_class} | <strong>Predicted:</strong> ${sample.predicted_class}</p>
+                                                            <p class="mb-2"><strong>Confidence:</strong> ${sample.prediction_confidence}%</p>
+                                                            <small class="text-muted">Top Features:</small>
+                                                            <div class="mt-1">
+                                                                ${sample.feature_contributions.map(feat => 
+                                                                    `<span class="badge ${feat.impact === 'Positive' ? 'bg-success' : 'bg-danger'} me-1">${feat.feature}: ${feat.contribution}</span>`
+                                                                ).join('')}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showValidation() {
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick*="showValidation"]').classList.add('active');
+            
+            // Update page title
+            document.getElementById('page-title').textContent = 'Model Validation';
+            document.getElementById('page-subtitle').textContent = 'Cross-Validation and ROC Analysis';
+            
+            // Hide other sections
+            document.getElementById('dataset-container').style.display = 'none';
+            document.getElementById('stats-container').style.display = 'none';
+            document.getElementById('preprocessing-container').style.display = 'none';
+            document.getElementById('model-container').style.display = 'none';
+            document.getElementById('xai-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            
+            // Load validation
+            loadValidation();
+        }
+
+        function showXAI() {
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick*="showXAI"]').classList.add('active');
+            
+            // Update page title
+            document.getElementById('page-title').textContent = 'Explainable AI';
+            document.getElementById('page-subtitle').textContent = 'Feature Importance and Model Interpretability';
+            
+            // Hide other sections
+            document.getElementById('dataset-container').style.display = 'none';
+            document.getElementById('stats-container').style.display = 'none';
+            document.getElementById('preprocessing-container').style.display = 'none';
+            document.getElementById('model-container').style.display = 'none';
+            document.getElementById('validation-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            
+            // Load XAI
+            loadXAI();
+        }
+
+        async function loadValidation() {
+            hideError();
+            showLoading('validation');
+            
+            try {
+                const response = await fetch('/model_validation');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to validate model');
+                }
+                
+                hideLoading('validation');
+                
+                // Create validation results view
+                const html = createValidationResults(data);
+                document.getElementById('validation-content').innerHTML = html;
+                document.getElementById('validation-container').style.display = 'block';
+                
+            } catch (error) {
+                hideLoading('validation');
+                showError(error.message);
+            }
+        }
+
+        async function loadXAI() {
+            hideError();
+            showLoading('xai');
+            
+            try {
+                const response = await fetch('/xai');
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to generate XAI explanations');
+                }
+                
+                hideLoading('xai');
+                
+                // Create XAI results view
+                const html = createXAIResults(data);
+                document.getElementById('xai-content').innerHTML = html;
+                document.getElementById('xai-container').style.display = 'block';
+                
+            } catch (error) {
+                hideLoading('xai');
+                showError(error.message);
+            }
+        }
+
+        // Navigation Functions
+        function showDatasetOverview() {
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick*="showDatasetOverview"]').classList.add('active');
+            
+            // Update page title
+            document.getElementById('page-title').textContent = 'Dataset Overview';
+            document.getElementById('page-subtitle').textContent = 'Comprehensive Dataset Overview and Analysis';
+            
+            // Hide other sections
+            document.getElementById('preprocessing-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            
+            // Load dataset overview
+            loadDatasetOverview();
+        }
+        
+        function showPreprocessing() {
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            document.querySelector('.nav-link[onclick*="showPreprocessing"]').classList.add('active');
+            
+            // Update page title
+            document.getElementById('page-title').textContent = 'Data Preprocessing';
+            document.getElementById('page-subtitle').textContent = 'Comprehensive Preprocessing Pipeline';
+            
+            // Hide other sections
+            document.getElementById('dataset-container').style.display = 'none';
+            document.getElementById('stats-container').style.display = 'none';
+            document.getElementById('error-container').style.display = 'none';
+            
+            // Load preprocessing
+            loadPreprocessing();
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+        
+        // Auto-load dataset when page loads
+        window.addEventListener('load', function() {
+            setTimeout(loadDatasetOverview, 500);
+        });
+    </script>
+        </div>
+        </div>
+    </div>
+</body>
+</html>
